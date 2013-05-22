@@ -30,30 +30,18 @@ java -cp zookeeper-3.4.5.jar:lib/*:conf:. casamento.TesteBarreiraDuplaMulher clu
 
 - Organização dos arquivos do diretório
 
+-- SyncPrimitive.java
+Arquivo que implementa as primitivas de sincronização que serão usadas pela barreira.
+
 -- BarreiraDupla.java
-Arquivo com a implementação das primitivas de barreira dupla
-
--- BarreiraSimples.java
-Arquivo com a implementação das primitivas de barreira simples
-
--- Mulher.java
-Arquivo que realiza as alterações de uma pessoa (Mulher) que irá casar e receber o sobrenome do marido
+Arquivo com a implementação da classe barreira dupla.
 
 -- Pessoa.java
-Definição dos métodos e atributos de uma pessoa que irá casar
-: casar()
-: getPort()
-: setEstadoCivilCasado()
-: setEstadoCivilSolteiro()
-: setEstadoCivilViuvo()
-: getEstadoCivil()
-: getNome()
-: getSobrenome()
-: setNome()
-: setSobrenome()
+Arquivo com a implementação da classe "Pessoa" que representa uma pessoa que será utilizada para os testes.
 
--- SyncPrimitive.java
-Arquivo que realiza a sincroização das primitivas de barreira
+-- Mulher.java
+Arquivo a implementacao de uma classe filha da classe "Pessoa" que representa uma mulher que irá casar e receber o 
+sobrenome do marido nos testes.
 
 -- TesteBarreiraDuplaMarido.java
 -- TesteBarreiraDuplaMulher.java
