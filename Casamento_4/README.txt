@@ -2,15 +2,20 @@ André Vasconcellos 080664
 Guilherme Lanna    083597
 Felipe Rosa 	   083499
 
-Barreira Dupla Reutilizável
+Barreira Dupla Reutilizável e Restrita
 --------------------------------------------
 
 	Para garantir a reutilização da barreira um processo checa se existe um Node "ready", caso exista o processo
 cria um "watcher" que o avisa quando o Node deixar de existir somente entao o processo pode entrar na barreira.
 No final de cada execucao, apos ter deletado todos os nodes representantes de cada Node cada node antes de sair tenta
 deletar o Node "ready" caso ele ainda exista.
+	Para garantir que a barreira seja restrita existe um Node "queue" onde cada processo quando quer entrar na 
+barreira cria um Node filho nele com um número sequencial que sera seu ID na fila e só consegue seguir para a próxima 
+parte da barreira caso seu ID seja um dos N primeiros da fila, onde N é o tamanho da barreira. No final da execução
+o processo deleta seu node na fila logo após deletar seu node que representa o processo garantindo assim que a fila
+anda.
+	Para testar a restritividade basta rodar um número de processos maior que o tamanho da barreira.
 	As bibliotecas de terceiros necessárias já estão incluídas no repositório.
-
 
 ---------- Marido Apressado ------------
 

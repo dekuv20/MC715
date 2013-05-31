@@ -2,6 +2,7 @@ André Vasconcellos 080664
 Guilherme Lanna    083597
 Felipe Rosa 	   083499
 
+Barreira Dupla
 ---------- Marido Apressado ------------
 
 - Compilação
