@@ -1,12 +1,7 @@
 package casamento;
 
-import static casamento.SyncPrimitive.mutex;
 import static casamento.SyncPrimitive.zk;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -16,7 +11,7 @@ import org.apache.zookeeper.data.Stat;
         int size;
         String name;
 
-        BarreiraDupla(String address, String root, int size) {
+     public BarreiraDupla(String address, String root, int size) {
             super(address);
             this.root = root;
             this.size = size;
@@ -41,11 +36,26 @@ import org.apache.zookeeper.data.Stat;
             }
         }
         
-        int getBarrierCount() throws KeeperException, InterruptedException{
+       public int getBarrierCount() throws KeeperException, InterruptedException{
             return (zk.getChildren(root + "/processes", false).size());
         }
         
-        boolean enter() throws KeeperException, InterruptedException{
+        //por algum motivo nao ta sincronizando perfeitamente, alguns levantam excessao
+       public synchronized void destroy() throws InterruptedException, KeeperException{
+            Stat barr = zk.exists(root, false);
+               if(barr != null){             
+                    if(getBarrierCount()==0){
+                    zk.delete(this.root + "/processes", -1);
+                     Stat ready = zk.exists(root + "/ready", false);
+                       if(ready != null){
+                            zk.delete(root + "/ready", -1);
+                       }
+                    zk.delete(this.root, -1);              
+                    }
+               }
+        }
+        
+       public boolean enter() throws KeeperException, InterruptedException{
             
             boolean semaforo = false;
             //Vai disparar watcher quando o node ready for criado
@@ -57,22 +67,14 @@ import org.apache.zookeeper.data.Stat;
                     Stat s = zk.exists(root + "/ready", false);
                if(s == null){
                     zk.exists(root + "/ready", true);
-                   
-           // O nome do node, hostname+ID unico, "synchronized" garante a unicidade do ID
-            try {
-                try {
-                    name = InetAddress.getLocalHost().getCanonicalHostName().toString()+zk.getChildren(root+"/processes", false).size();
-                } catch (        KeeperException | InterruptedException ex) {
-                    Logger.getLogger(BarreiraDupla.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } catch (UnknownHostException e) {
-                System.out.println(e.toString());
-            }
-            String fullPath = root + "/processes/" + name;      
-            //cria um node para o processo em questao      
-                   System.out.println("cria o node "+fullPath);
-                 zk.create(fullPath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                    CreateMode.EPHEMERAL);  
+       
+            String fullPath = root + "/processes/node_";      
+            //cria um node para o processo em questao                      
+                name = zk.create(fullPath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                    CreateMode.PERSISTENT_SEQUENTIAL); 
+                fullPath = name;
+                name = fullPath.split("/")[fullPath.split("/").length - 1];
+                System.out.println("cria o node "+name); 
                  semaforo = true;
                  
                }else{
@@ -99,7 +101,7 @@ import org.apache.zookeeper.data.Stat;
                           Stat s = zk.exists(root + "/ready", false);
                              if(s == null){
                            zk.create(root + "/ready", new byte[0],
-                                ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+                                ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                        }
                         return true;
                     }
@@ -107,7 +109,7 @@ import org.apache.zookeeper.data.Stat;
             }
         }
 
-        boolean leave() throws KeeperException, InterruptedException{
+       public boolean leave() throws KeeperException, InterruptedException{
              String fullPath = root + "/processes/" + name;
                         
             while(true){

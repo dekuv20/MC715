@@ -9,8 +9,8 @@ public class SyncPrimitive implements Watcher {
 
     static ZooKeeper zk = null;
     static final Integer mutex = new Integer(-1);;
-    static final Integer mutex2 = new Integer(-1);;
-    static final Integer mutex3 = new Integer(-1);;
+  //  static final Integer mutex2 = new Integer(-1);;
+  //  static final Integer mutex3 = new Integer(-1);;
     String root;
 
     SyncPrimitive(String address) {
