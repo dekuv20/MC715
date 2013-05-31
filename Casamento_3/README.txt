@@ -21,6 +21,10 @@ javac -cp ../zookeeper-3.4.5.jar:../lib/*:../conf:. -Xlint:deprecation *.java
 
 java -cp zookeeper-3.4.5.jar:lib/*:conf:. casamento.TesteBarreiraSimplesMulher <host_cluster>:<porta> <tamanho_barreira> <porta_socket> <#_iteracoes>
 
+- Para o teste simples:
+
+java -cp zookeeper-3.4.5.jar:lib/*:conf:. casamento.SimpleTest <host_cluster>:<porta> <tamanho_barreira> 
+
 Ex.
 java -cp zookeeper-3.4.5.jar:lib/*:conf:. casamento.TesteBarreiraDuplaMulher cluster1.lab.ic.unicamp.br:35858 4 40050 4
 java -cp zookeeper-3.4.5.jar:lib/*:conf:. casamento.TesteBarreiraDuplaMarido cluster1.lab.ic.unicamp.br:35858 4 40050 4
@@ -43,6 +47,13 @@ Arquivo a implementacao de uma classe filha da classe "Pessoa" que representa um
 sobrenome do marido nos testes.
    
 -- TesteBarreiraDuplaMarido.java
+Cria um processo representando um Marido.
+
 -- TesteBarreiraDuplaMulher.java
+Cria um processo representando um Marido.
+
+-- SimpleTest.java
+Teste simples contendo operações irrelevantes apenas para testar o funcionamento da barreira.
+
 Arquivos para teste de execução
 
