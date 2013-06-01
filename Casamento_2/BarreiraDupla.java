@@ -110,10 +110,12 @@ import org.apache.zookeeper.data.Stat;
                             if(zk.exists(fullPath, false) != null){
                            //se for o ultimo elemento avisa o primeiro elemento   
                             //pelo watcher do exists
-                            zk.delete(fullPath, 0);  
-                            //espera no primeiro elemento
+                           
                             zk.exists(root + "/" + list.get(0),
                                     true);
+									
+									 zk.delete(fullPath, 0);  
+                            //espera no primeiro elemento
                             mutex.wait();
                             }
                         }

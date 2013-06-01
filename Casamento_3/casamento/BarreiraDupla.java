@@ -143,12 +143,15 @@ import org.apache.zookeeper.data.Stat;
                                if(s != null){
                            //se for o ultimo elemento avisa o primeiro elemento   
                             //pelo watcher do exists
+							
+							 //espera no primeiro elemento
+                            zk.exists(root + "/processes/" + list.get(0),
+                                    true);
+									
                                 System.out.println(fullPath
                                         + " se deleta e espera no primeiro " + list.get(0));
                             zk.delete(fullPath, -1);  
-                            //espera no primeiro elemento
-                            zk.exists(root + "/processes/" + list.get(0),
-                                    true);
+                           
                             mutex.wait();
                             }
                         }

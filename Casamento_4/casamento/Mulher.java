@@ -64,6 +64,7 @@ public class Mulher extends Pessoa{
             
         }catch (IOException ex) {
                  Logger.getLogger(Mulher.class.getName()).log(Level.SEVERE, null, ex);
+                 clientSocket.close();
              }
       String sobrenomeMarido = new String(receivePacket.getData());
       System.out.println("Resposta do Marido:" + sobrenomeMarido);

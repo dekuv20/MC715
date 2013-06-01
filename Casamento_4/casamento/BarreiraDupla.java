@@ -79,7 +79,7 @@ import org.apache.zookeeper.data.Stat;
        public boolean enter() throws KeeperException, InterruptedException{
            //faz fila na entrada e deixa passar apenas o tamanho da barreira
            //por vez
-           String queuePath = root + "/queue/node_";
+           String queuePath = root + "/queue/queue_";
             //cria um node para o processo em questao                      
                 queueName = zk.create(queuePath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
                     CreateMode.EPHEMERAL_SEQUENTIAL); 
@@ -119,12 +119,14 @@ import org.apache.zookeeper.data.Stat;
                    if(condition){
                     semaforo = true;
                    }else{
+                       System.out.println("Espera na fila...");
                        zk.exists(root + "/ready", true);
                        mutex.wait();   
                    }
                }else{
                //se "/ready" existe ele seta um watcher nele, nao cria um node para si
                  //e espera até ele deixar de existir
+                   System.out.println("Espera o ready ser deletado...");
                    zk.exists(root + "/ready", true);
                    mutex.wait();                 
                }
@@ -132,7 +134,7 @@ import org.apache.zookeeper.data.Stat;
                 }
                //seta o watcher e cria o node para o processo
                 zk.exists(root + "/ready", true);     
-                String fullPath = root + "/processes/node_";                           
+                String fullPath = root + "/processes/proc_";                           
                 name = zk.create(fullPath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
                     CreateMode.EPHEMERAL_SEQUENTIAL); 
                 fullPath = name;
@@ -199,16 +201,18 @@ import org.apache.zookeeper.data.Stat;
                                if(s != null){
                            //se for o ultimo elemento avisa o primeiro elemento   
                             //pelo watcher do exists
-                                System.out.println(fullPath
-                                        + " se deleta e espera no primeiro " + list.get(0));
-                            zk.delete(fullPath, -1);  
+                                   
+                                   //espera no primeiro elemento
+                            zk.exists(root + "/processes/" + list.get(0),
+                                    true);
                             
                             System.out.println("Deleta " + queueName);
                             zk.delete(root + "/queue/" + queueName, -1);
                             
-                            //espera no primeiro elemento
-                            zk.exists(root + "/processes/" + list.get(0),
-                                    true);
+                                System.out.println(fullPath
+                                        + " se deleta e espera no primeiro " + list.get(0));
+                            zk.delete(fullPath, -1);  
+                   
                             mutex.wait();
                             }
                         }
